@@ -45,6 +45,8 @@ def authenticate_user():
             sys.exit(1)
 
         server_key = get_server_public_key(sock)
+        print(f"Server public key received.")
+        print(f"Server key: {server_key.export_key().decode('utf-8')}")
         resp = send_credentials(sock, action, username, password, server_key)
 
         try:
@@ -78,7 +80,7 @@ def main():
     def on_message(msg):
         msg_type = msg.get("type")
         if msg_type is None:
-            # System or server message (like status)
+            # Probably a system or status message from the server
             if "status" in msg and msg["status"] == "ChatRoomReady":
                 window.display_message("system", "You have been connected to a chatroom. Initiating ECC key exchange...")
                 # Start ECC key exchange
@@ -89,13 +91,14 @@ def main():
 
         if msg_type == "ecc_key":
             # Received partner's ECC public key
+            window.display_message("ecc_step", "Received partner's ECC public key.")
             partner_pub = deserialize_public_key(msg["data"])
             window.partner_public_key = partner_pub
-            window.display_message("ecc_key", "Received partner's ECC public key.")
             window.finalize_ecc_key()
 
         elif msg_type == "ecc_confirm":
             # Partner confirmed ECC handshake
+            window.display_message("ecc_step", "Received ECC confirmation from partner.")
             if not window.ready_for_chat:
                 window.finalize_ecc_key()
 
@@ -106,7 +109,6 @@ def main():
                 window.display_message("text", f"Partner: {decrypted}")
             else:
                 window.display_message("system", "Received encrypted message before handshake complete.")
-
         else:
             # Unknown type
             window.display_message("system", f"Unknown message type: {msg_type}")
@@ -119,3 +121,6 @@ def main():
     window.show()
     sys.exit(app.exec_())
 
+
+if __name__ == "__main__":
+    main()
