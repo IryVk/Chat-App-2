@@ -22,20 +22,20 @@ def load_keys():
     return private_key, public_key
 
 def load_users():
-    if not os.path.exists("users.csv"):
+    if not os.path.exists("server/users.csv"):
         # Create file if doesn't exist
-        with open("users.csv", "w", newline='') as f:
+        with open("server/users.csv", "w", newline='') as f:
             writer = csv.writer(f)
             writer.writerow(["username", "hashed_password"])
     users = {}
-    with open("users.csv", "r") as f:
+    with open("server/users.csv", "r") as f:
         reader = csv.DictReader(f)
         for row in reader:
             users[row["username"]] = row["hashed_password"]
     return users
 
 def save_user(username, hashed_password):
-    with open("users.csv", "a", newline='') as f:
+    with open("server/users.csv", "a", newline='') as f:
         writer = csv.writer(f)
         writer.writerow([username, hashed_password])
 
