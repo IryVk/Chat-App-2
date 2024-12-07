@@ -85,6 +85,7 @@ This project is a chat application developed as part of coursework to explore cr
 
 ```bash
 Chat-App-2/  # project root
+├── attacks/  # pentesting scripts
 ├── server/
 │   └── keys/  # server RSA kys
 │   └── gen_keys.py  # RSA key generation
